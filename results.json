@@ -1,0 +1,31 @@
+{
+  "question": "Can a metric regressor on skeleton-normalised forward-kinematics features beat a tiny MLP on raw joint rotations at predicting a legs-spread pose metric when the skeleton proportions change?",
+  "method": "Simulated 16-joint humanoid with FK; 20,000 correlated random poses; legs spread = foot-to-foot distance / leg length, knee bend as overlapping metric. Train on standard skeleton (75% of poses); test on held-out poses with the standard skeleton and with randomly changed limb proportions. Both models tuned with 3-fold CV on train only (same random-search budget), refit with seeds 42-44.",
+  "dataset": {
+    "name": "Simulated humanoid poses (numpy FK)",
+    "source_url": "generated locally with numpy (no download)",
+    "n_rows": 20000,
+    "n_train": 15000,
+    "n_test": 5000,
+    "same_as_paper": false,
+    "baseline_is_papers_method": false
+  },
+  "metric_name": "RMSE of legs-spread on changed-skeleton test poses",
+  "higher_is_better": false,
+  "baseline": "Tiny scikit-learn MLPRegressor (standardised raw joint rotations only), CV-tuned over a small grid; stand-in for the paper's per-metric tiny network.",
+  "improved": "LightGBM (CV-tuned, same number of random-search iterations) on raw rotations + leg-length-normalised FK joint positions + angles between limb vectors computed with each sample's skeleton.",
+  "metrics": {
+    "baseline_score": 0.06046231974541496,
+    "baseline_score_std": 0.0020410798789728436,
+    "baseline_rmse_standard_skeleton": 0.03728400495302437,
+    "baseline_rmse_standard_skeleton_std": 0.003140071340290846,
+    "baseline_abs_corr_error_vs_knee_bend": 0.061470206673991064,
+    "improved_score": 0.04728802640151767,
+    "improved_score_std": 0.00040189769845403237,
+    "improved_rmse_standard_skeleton": 0.026107623624618288,
+    "improved_rmse_standard_skeleton_std": 0.0002213481829651366,
+    "improved_abs_corr_error_vs_knee_bend": 0.021135015300355563,
+    "improvement": 0.01317429334389729
+  },
+  "notes": "Simulation only: results depend on the assumed pose distribution and skeleton-variation ranges. The improved model is given the skeleton (bone lengths) at inference, the baseline is not, as in the planned comparison; the gain therefore mixes model class and extra input information. Target is a deterministic function of FK, so features closely related to it are available to the improved model. Error/knee-bend correlation is the absolute Pearson correlation on changed-skeleton test poses (lower = less interference). Paper reports no numeric result to compare with."
+}
