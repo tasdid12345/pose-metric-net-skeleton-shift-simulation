@@ -24,6 +24,28 @@ python analysis.py
 ## Results
 Results are written to `results.json` (and a chart to `figures/`).
 
+## Results (latest run)
+
+On a simulated humanoid dataset (5,000 held-out test poses with changed limb proportions), a tiny scikit-learn MLP on raw joint rotations reached legs-spread RMSE 0.0605, while LightGBM on skeleton-normalised forward-kinematics features reached 0.0473, a modest gain that also gets the skeleton as input.
+
+| Metric | Value |
+|---|---|
+| baseline_score | 0.06046 |
+| baseline_score_std | 0.002041 |
+| baseline_rmse_standard_skeleton | 0.03728 |
+| baseline_rmse_standard_skeleton_std | 0.00314 |
+| baseline_abs_corr_error_vs_knee_bend | 0.06147 |
+| improved_score | 0.04729 |
+| improved_score_std | 0.0004019 |
+| improved_rmse_standard_skeleton | 0.02611 |
+| improved_rmse_standard_skeleton_std | 0.0002213 |
+| improved_abs_corr_error_vs_knee_bend | 0.02114 |
+| improvement | 0.01317 |
+
+Run on 2026-10-12. Full output: [results.json](results.json) · [run.log](run.log)
+
+Notes: Simulation only: results depend on the assumed pose distribution and skeleton-variation ranges. The improved model is given the skeleton (bone lengths) at inference, the baseline is not, as in the planned comparison; the gain therefore mixes model class and extra input information. Target is a deterministic function of FK, so features closely related to it are available to the improved model. Error/knee-bend correlation is the absolute Pearson correlation on changed-skeleton test poses (lower = less interference). Paper reports no numeric result to compare with.
+
 ## Reference
 
 This project is motivated by the following paper:
